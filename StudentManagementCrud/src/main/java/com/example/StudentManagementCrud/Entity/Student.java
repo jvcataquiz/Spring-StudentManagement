@@ -12,6 +12,13 @@ public class Student {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    public Student(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     @Column(name = "email", nullable = false)
     private String email;
     public Student() {
@@ -23,6 +30,7 @@ public class Student {
         this.lastName = lastName;
         this.email = email;
     }
+
 
     public Long getId() {
         return id;
