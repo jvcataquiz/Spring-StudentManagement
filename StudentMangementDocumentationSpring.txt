@@ -1,0 +1,205 @@
+Step: 1 Config application.properties,
+
+	spring.datasource.url=jdbc:mysql://localhost:3306/studentmanagement?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+	spring.datasource.username=root
+	spring.datasource.password=C0ffee0925*
+	#Hiberante
+	spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+
+	#Hibernate auto ddl
+	spring.jpa.hibernate.ddl-auto=update
+	logging.level.org.hibernate.SQL = DEBUG
+Step 2: Create four packages:
+	1. Entity - getter setter/ contructors 
+	2  Service - Crud operation in the database, like findall, save,
+	3. Controller - route/http operations
+	4. Repository - Implement Crud Operations
+
+Step 3: Create a Class in the Entity Package: named Student
+
+	in this class create an attribute/properties, create a getter and setter and create 
+	a contructor and parameterless and bodyless constructor
+
+step 4: Attaching anotation for creating table for the database
+
+	1. @Entity and @Table(name="nameofthetable"): above the Class
+	2. @Id and @GeneratedValue(strategy = GenerationType.IDENTITY): above your id
+	3. @Column(name = "nameofthecolumn/field", nullable = false): above the attribute for creating field/table column
+
+Step 5: Create an Interface to Package Repository and named it: StudentRepository
+	extends it to JpaRepository
+	JpaRepository<Student, Long>
+	There are 2 paramenter in JpaRepository
+		1. First Parameter: Class name - Student
+		2. Second name the Non-primitive data type of your ID - Long
+
+Step 6: Create an Interface to Package Service and named it: StudentService
+
+
+Step 7: Create an another Package in the Service Package and named it: Impl
+	
+Step 8: Create a Class to Package Impl and named it: StudentServiceImpl
+	Then implements StudentService Class
+	No Code/Blank
+
+Step 9: Create a Class to the Controller package and named it : StudentController
+	annote this class using the annotation: @controller
+
+Step 10: Inside the StudentService: and   List<Student> getAllStudents(); -> Abstraction
+Step 11: Go to StudentServiceImpl and implements the Code Changes -> need to implement, to Overide List<Student> getAllStudents()
+	and inject the @Service annotion
+	declare StudentRepository as private, and create a contructor to this repo.
+
+Step 12: Go to Student Controller for the Routing.
+	declare StudentService as a private, and genarate also a contructor to this service
+
+	//Creating route to return model and view
+	create a function and anotate: @GetMapping("/students") -> url is localhost/students
+	code:
+	@GetMapping("/students") -> url = localhost/students
+   	 public String listStudents(Model model){ -> creating model to deliver to the views/html and display it
+    	 model.addAttribute("students",studentService.getAllStudents()); -> using key-value pair -> key = students, value = studentService.getAllStudents()
+   	 return "students"; -> for diplay (students) is the html file
+   	 }
+	}
+
+Step 13: Creating html file in the Resourses/templates folder
+
+	you need declare = <html xmlns:th="http://www.thymeleaf.org"> to know this 
+ 	<tr th:each = "student: ${students}"> to iterate the data in the studdents
+	<td th:text = "${student.firstName}"></td> to set a text with the value of the .firstaname
+	is for thymleaf
+
+
+Step 14: Go to SrpingBootApplciation
+	implements CommandLineRunner -> implemtent the method to remove the error
+	then we need to used @Autowired annotion to the StudentRepository to insert data to our database
+	this is step react as the seeder.
+
+	Exmple:
+		Student student3 = new Student("Maria", "DeLa Crus", "mariadelacrus@gmail.com");
+		studentRepository.save(student3);
+
+
+Step 15: Test it!!
+
+Creating new Student (Post Method):
+
+
+ Step 1 : create an anchor tag to redirect to a form:
+	Example th:href ="@{/students/new}";
+
+ Step 2: Create a route to StudentController
+
+  @GetMapping("/students/new") -> url
+    public String createStudents(Model model){
+       //create student object to hold the data from the form
+        Student student = new Student();
+        model.addAttribute("student", student); key value pair
+        return "create_student"; -> html filename
+    }
+ Step 3: Create a html named: create_student
+	inside this html file you need
+	<form th:action = "@{/savestudents}" th:object ="${newstudent}"> -> action to jump after the execution th:object ="${newstudent}" -> the keynmame located in the StudentController
+         <label>
+                    Student First Name:
+          </label>
+                <input type="text"
+                name="firstName"
+                th:field ="*{firstName}" -> to bind to the field/column name of the table of the database
+                placeholder="Enter Student First Name:" class=" form-control"
+                />
+
+	</form>
+Step 4: Create a method to the StudentService
+	//method with a Entity Parameter
+        Student saveNewStudent(Student student);
+	then
+	implement it to the StudentServiceImpl
+     @Override
+     public Student saveNewStudent(Student student) {
+        return studentRepository.save(student); -> implementation/ inserting a data to database using .save(entity)
+    }
+
+Step 5: Go to StudentController
+	Create a http method post
+	//Code
+  @PostMapping("/savestudents") -> cacthing what action in the form in the create_student.html
+    public String saveStudent(@ModelAttribute("newstudent") Student student){ -> hold the data in the form(specific th:field)
+    studentService.saveNewStudent(student); -> calling method in the StudentSevice then implements in the StudentServiceImpl
+    return "redirect:/students"; -> redirect to landing page/ students route
+    }
+Step 6: Test it!!
+
+Implement Update to existing records (Put/patch Method):
+
+Step 1: in the students.html add an anchor tag to direct it to the update html page
+	//actual code
+	 <a th:href ="@{/update/{id}(id=${student.id})" class="btn btn-primary">Update</a>
+
+Step 2: Create a method to StudentService
+	  Student getStudentById(Long id);
+          Student updateStudent(Student student);
+Step 3: Implement the Two method to the StudentServiceImpl
+   @Override
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).get(); -> search the id
+    }
+
+    @Override
+    public Student updateStudent(Student student) {
+        return studentRepository.save(student); -> save the updated records
+    }
+Step 4: Create a route to handle a form,  Go to the StudentController
+   @GetMapping("/edit/{id}") -> catch the url
+    public String editStudent(@PathVariable Long id, Model model){ -> get the id in the url using @PathVariable/ it is like req.params
+    model.addAttribute("updatestudent", studentService.getStudentById(id)); -> find the id in the databse then to dispaly all the records of the id
+    return "edit_student"; -> view to html
+    }
+
+Step 5: Create new html for the Update form
+	Copy the create_html content and change only the action path
+        <form th:action = "@{/update/{id}(id=${updatestudent.id}})}" th:object ="${updatestudent}" method="POST">
+
+Step 6: Create a route to StudentController to handle the Changes of the records
+
+ @PostMapping("/update/{id}") -> catch the action of the form update
+    public String updateStudent(@PathVariable Long id, @ModelAttribute("updatestudent") Student student){ -> get the id in url and get the keyname in the form named "updatestudent"
+       //get the id from the database
+        Student updateStudentRecords = studentService.getStudentById(id);
+       
+	 updateStudentRecords.setId(id); -> set the id
+
+        //set data to the database by getting the value from the form using get()
+        updateStudentRecords.setFirstName(student.getFirstName());
+        updateStudentRecords.setLastName(student.getLastName());
+        updateStudentRecords.setEmail(student.getEmail());
+        //save the updated data to the database
+        studentService.updateStudent(updateStudentRecords);
+        return "redirect:/students";
+    }
+
+Step 7: Test it!!
+
+Delete a specific Data n the databse
+Step 1: Add anchor tag to the student.html
+    <a th:href ="@{/delete/{id}(id=${student.id})}" class="btn btn-primary">Delete</a>
+
+Step 2: Create a void method to the StudentService
+ void deleteStudentRecord(Long id); -> passed the id you want to delete
+
+Step 3: Implement the StudentService to the StudentServiceImpl
+	@Override
+    public void deleteStudentRecord(Long id) {
+        studentRepository.deleteById(id); -> use the deletebyid() function to delete it to the repo
+    }
+
+Step 4: Go to the StudentController and create a route to handle the delete method
+
+  @GetMapping("/delete/{id}") -> handdle the anchor tag url
+     public String deleteStudent(@PathVariable Long id){ -> get the id by using @Pathvariable
+        studentService.deleteStudentRecord(id); -> call a method in the StudentService
+        return "redirect:/students";  -> jump to the landing page again
+     }
+
+Step 5: Test it!!
