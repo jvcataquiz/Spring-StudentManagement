@@ -7,6 +7,49 @@
 
 </head>
 <body>
+<div class="container">
+    <div class="row">
+        <h1>
+            Create new Record
+        </h1>
+    </div>
+    <div class="row card-body">
+        <form th:action = "@{/students}" th:object ="${newstudent}" method="POST">
+            <div class="form-group">
+                <label>
+                    Student First Name:
+                </label>
+                <input type="text"
+                name="firstName"
+                th:field ="${firstName}"
+                placeholder="Enter Student First Name:" class=" form-control"
+                />
+                <label>
+                    Student Last Name:
+                </label>
+                <input type="text"
+                       name="lastName"
+                       th:field ="${lastName}"
+                       placeholder="Enter Student Last Name:" class=" form-control"
+                />
+                <label>
+                    Student Email:
+                </label>
+                <input type="email"
+                       name="email"
+                       th:field ="${email}"
+                       placeholder="Enter Student Email:" class=" form-control"
+                />
 
+                <div class="box-body">
+                    <button type="submit" class="btn btn-primary">
+                        Submit
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
 </body>
 </html>
