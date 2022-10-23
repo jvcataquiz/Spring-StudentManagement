@@ -12,11 +12,15 @@ public class StudentServiceImpl implements StudentService {
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
-
-
-
     @Override
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
+
+    @Override
+    public Student saveNewStudent(Student student) {
+        return studentRepository.save(student);
+    }
+
+
 }
