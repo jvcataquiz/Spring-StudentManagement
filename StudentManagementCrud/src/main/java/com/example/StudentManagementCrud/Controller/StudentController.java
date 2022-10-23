@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -31,6 +32,27 @@ public class StudentController {
     public String saveStudent(@ModelAttribute("newstudent") Student student){
     studentService.saveNewStudent(student);
     return "redirect:/students";
+    }
+@GetMapping("/edit/{id}")
+    public String editStudent(@PathVariable Long id, Model model){
+    model.addAttribute("updatestudent", studentService.getStudentById(id));
+    return "edit_student";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateStudent(@PathVariable Long id, @ModelAttribute("updatestudent") Student student){
+       //get the id from the database
+        Student updateStudentRecords = studentService.getStudentById(id);
+
+        updateStudentRecords.setId(id);
+
+        //set data to the database by getting the value from the form using get()
+        updateStudentRecords.setFirstName(student.getFirstName());
+        updateStudentRecords.setLastName(student.getLastName());
+        updateStudentRecords.setEmail(student.getEmail());
+        //save the updated data to the database
+        studentService.updateStudent(updateStudentRecords);
+        return "redirect:/students";
     }
 }
 

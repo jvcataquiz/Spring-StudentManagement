@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Student Records</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+</head>
+<body>
+<nav class="navbar bg-light">
+  <div class="container-fluid">
+    <a th:href="@{/students}" class="navbar-brand">Student Management</a>
+    <form class="d-flex" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+<br>
+<br>
+<div class="container">
+  <div class="row">
+    <h1>
+     Update Existing Record
+    </h1>
+  </div>
+  <div class="row card-body">
+    <form th:action = "@{/update/{id}(id=${updatestudent.id})}" th:object ="${updatestudent}" method="POST">
+      <div class="form-group">
+        <label>
+          Student First Name:
+        </label>
+        <input type="text"
+               name="firstName"
+               th:field ="*{firstName}"
+               placeholder="Enter Student First Name:" class=" form-control"
+        />
+        <label>
+          Student Last Name:
+        </label>
+        <input type="text"
+               name="lastName"
+               th:field ="*{lastName}"
+               placeholder="Enter Student Last Name:" class=" form-control"
+        />
+        <label>
+          Student Email:
+        </label>
+        <input type="email"
+               name="email"
+               th:field ="*{email}"
+               placeholder="Enter Student Email:" class=" form-control"
+        />
+
+        <div class="box-body mt-3">
+          <button type="submit" class="btn btn-primary">
+            Submit
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+</body>
+</html>
